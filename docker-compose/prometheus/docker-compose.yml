@@ -11,6 +11,9 @@ services:
             - prometheus_data:/prometheus
         networks:
             - prometheus_net
+        depends_on:
+            - prometheus-exporter-cadvisor
+            - prometheus-exporter-node
         restart: unless-stopped
 
     prometheus-exporter-cadvisor:
@@ -22,20 +25,32 @@ services:
             - /:/rootfs:ro
             - /var/run:/var/run:ro
             - /sys:/sys:ro
-            - /var/lib/docker/:/var/lib/docker:ro 
+            - /var/lib/docker/:/var/lib/docker:ro
             - /dev/disk/:/dev/disk:ro
         networks:
             - prometheus_net
-        depends_on:
-            - prometheus
         devices:
             - /dev/kmsg
         privileged: true
         restart: unless-stopped
 
+    prometheus-exporter-node:
+        image: quay.io/prometheus/node-exporter:latest
+        container_name: prometheus-exporter-node
+        ports:
+            - "9088:9100"
+        volumes:
+            - '/:/host:ro,rslave'
+        networks:
+            - prometheus_net
+        command:
+            - '--path.rootfs=/host'
+        pid: host
+        restart: unless-stopped
+
     grafana:
         image: grafana/grafana-oss
-        container_name: grafana      
+        container_name: grafana
         ports:
             - "9080:3000"
         volumes:
