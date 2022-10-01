@@ -805,13 +805,13 @@
       ]
     },
     "time": {
-      "from": "now-6h",
+      "from": "now-24h",
       "to": "now"
     },
     "timepicker": {},
-    "timezone": "",
+    "timezone": "browser",
     "title": "Cadvisor exporter",
-    "uid": "pMEd7m0Mz",
+    "uid": "cadvisor",
     "version": 1,
     "description": "Simple exporter for cadvisor only"
   }
