@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    filebrowser:
+        image: filebrowser/filebrowser:s6
+        container_name: filebrowser
+        ports:
+            - '8880:80'
+        volumes:
+            - 'filebrowser_data:/config'
+            - 'filebrowser_db:/database'
+            - '${SRV_DIRECTORY}:/srv'
+        environment:
+            PUID: ${PUID}
+            PGID: ${PGID}
+        restart: unless-stopped
+
+volumes:
+    filebrowser_data:
+        driver: local
+    filebrowser_db:
+        driver: local
+

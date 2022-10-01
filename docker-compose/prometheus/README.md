@@ -40,7 +40,7 @@ Exporter health can be checked here: `http://<host-ip>:9090/targets`. All states
 
 #### Setup Grafana
 
- - Open `http://<host-ip>:9080`. Default login is `admin/admin`.
+ - Open `http://<host-ip>:9080`. Default login credentials are `admin/admin`.
  - Create a new data source: `Configuration -> Data sources -> Add data source -> Prometheus`. Input URL: `http://prometheus:9090`, uncheck toggle `Manage alerts via Alerting UI`, save and test. It should say that `Data source is working`.
  - Import dashboards: `Dashboards -> Import`. Let's import via json. Dashboards are located in `etc/grafana/dashboards`. Copy, paste json contents and click Load. Select prometheus data source and click Import.
 
