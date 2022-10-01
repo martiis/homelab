@@ -34,7 +34,7 @@ We'll be using docker compose and the command is very simple:
 
 ### Post Run
 
-#### Check health
+#### Health check 
 
 Exporter health can be checked here: `http://<host-ip>:9090/targets`. All states should be up and green.
 
@@ -43,7 +43,6 @@ Exporter health can be checked here: `http://<host-ip>:9090/targets`. All states
  - Open `http://<host-ip>:9080`. Default login is `admin/admin`.
  - Create a new data source: `Configuration -> Data sources -> Add data source -> Prometheus`. Input URL: `http://prometheus:9090`, uncheck toggle `Manage alerts via Alerting UI`, save and test. It should say that `Data source is working`.
  - Import dashboards: `Dashboards -> Import`. Let's import via json. Dashboards are located in `etc/grafana/dashboards`. Copy, paste json contents and click Load. Select prometheus data source and click Import.
-
 
 [cadvisor]: https://github.com/google/cadvisor
 [node_exporter]: https://github.com/prometheus/node_exporter
