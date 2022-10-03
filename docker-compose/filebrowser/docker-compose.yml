@@ -20,4 +20,3 @@ volumes:
         driver: local
     filebrowser_db:
         driver: local
-
