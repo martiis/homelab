@@ -19,7 +19,7 @@ How to disable Ubuntu DNS resolver:
 > sudo systemctl stop systemd-resolved.service
 ```
 
-How to disable it on other Linux distributions cant be found using Google.
+How to disable it on other Linux distributions can be found using Google.
 
 ### Portainer
 
@@ -50,6 +50,9 @@ After adding more lists don't forget to update gravity:
 Tools -> Update Gravity -> (Click) Update
 ```
 
+## Use
+
+Configure your router’s DHCP options to force clients to use Pi-hole as their DNS server.
 
 [dns-sinkhole]: https://en.wikipedia.org/wiki/DNS_sinkhole
 [firebog]: https://firebog.net/
