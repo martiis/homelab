@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v3
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik_traefik_net
+      - --entryPoints.http.address=:80
+      - --entryPoints.remote.address=:27813
+      - --entryPoints.metrics.address=:8082
+    ports:
+      - "80:80"
+      - "8080:8080"
+    expose:
+      - 8082
+    networks:
+      - traefik_traefik_net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+networks:
+  traefik_traefik_net:
+    driver: bridge
+
+

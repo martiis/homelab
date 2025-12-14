@@ -1,0 +1,220 @@
+services:
+  homer:
+    image: b4bz/homer:latest
+    container_name: homer
+    expose:
+      - 8080
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    volumes:
+      - "${SRV_DIRECTORY}/etc/homer/assets:/www/assets"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.homer.entrypoints=http"
+      - "traefik.http.routers.homer.rule=Host(`homer.local.box`)"
+      - "traefik.http.services.homer.loadbalancer.server.port=8080"
+    restart: unless-stopped
+
+  lidarr:
+    image: linuxserver/lidarr:latest
+    container_name: lidarr
+    expose:
+      - 8686
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "lidarr_data:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.lidarr.entrypoints=http"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.local.box`)"
+      - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
+    restart: unless-stopped
+
+  bazarr:
+    image: linuxserver/bazarr:latest
+    container_name: bazarr
+    expose:
+      - 6767
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "bazarr_data:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.bazarr.entrypoints=http"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.local.box`)"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+    restart: unless-stopped
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: sonarr
+    expose:
+      - 8989
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "sonarr_data:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.sonarr.entrypoints=http"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.local.box`)"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    expose:
+      - 7878
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "radarr_data:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.radarr.entrypoints=http"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.local.box`)"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+    restart: unless-stopped
+
+  deluge:
+    image: linuxserver/deluge:latest
+    container_name: deluge
+    expose:
+      - "6881/tcp"
+      - "6881/udp"
+      - "8112/tcp"
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "deluge_data:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.deluge.entrypoints=http"
+      - "traefik.http.routers.deluge.rule=Host(`deluge.local.box`)"
+      - "traefik.http.services.deluge.loadbalancer.server.port=8112"
+    restart: unless-stopped
+
+  jackett:
+    image: linuxserver/jackett:latest
+    container_name: jackett
+    expose:
+      - 9117
+    networks:
+      - pirateship_net
+      - traefik_traefik_net
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - "jackett_data:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_traefik_net"
+      - "traefik.http.routers.jackett.entrypoints=http"
+      - "traefik.http.routers.jackett.rule=Host(`jackett.local.box`)"
+      - "traefik.http.services.jackett.loadbalancer.server.port=9117"
+    restart: unless-stopped
+
+  plex:
+    image: linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      VERSION: docker
+    devices:
+      - /dev/dri:/dev/dri # give access to Intel iGPU
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "plex_data:/config"
+    labels:
+      - "traefik.enable=false"
+    restart: unless-stopped
+
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    container_name: jellyfin
+    network_mode: host
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      VERSION: docker
+    devices:
+      - /dev/dri:/dev/dri # give access to Intel iGPU
+    group_add:
+      - "109"  # render group ID
+      - "44"   # video group ID
+    volumes:
+      - "${LIBRARY_DIRECTORY}:/library"
+      - "jellyfin_data:/config"
+    labels:
+      - "traefik.enable=false"
+    restart: unless-stopped
+
+networks:
+  pirateship_net:
+    driver: bridge
+  traefik_traefik_net:
+    external: true
+
+volumes:
+  bazarr_data:
+    external: true
+  sonarr_data:
+    external: true
+  radarr_data:
+    external: true
+  deluge_data:
+    external: true
+  jackett_data:
+    external: true
+  plex_data:
+    external: true
+  jellyfin_data:
+    external: true
+  lidarr_data:
+    external: true
