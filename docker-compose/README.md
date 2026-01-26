@@ -30,7 +30,8 @@ Portainer provides a web UI for managing Docker containers and stacks. How to [I
 
 - **Pirateship** requires **Traefik** to be running
 - Most stacks use Traefik for reverse proxy routing (except services using host networking)
-- Ensure Pi-hole is configured if using local domains
+- **Pi-hole** is recommended for DNS resolution of `*.local.box` domains used by Traefik-routed services
+- Ensure Pi-hole is configured if using `*.local.box` domains (see [Pirateship README](pirateship/README.md) for details)
 
 ## Usage
 
@@ -58,13 +59,17 @@ docker compose down
 
 ## Upgrade Portainer CE
 
-To upgrade Portainer using Docker on Linux:
+To upgrade Portainer using Docker on Linux, copy and paste the following:
 
 ```bash
-docker stop portainer
-docker rm portainer
-docker pull portainer/portainer-ce:latest
-docker run -d -p 9000:9000 -p 9443:9443 --name=portainer --restart=always \
+docker stop portainer && \
+docker rm portainer && \
+docker pull portainer/portainer-ce:latest && \
+docker run -d \
+  -p 9000:9000 \
+  -p 9443:9443 \
+  --name=portainer \
+  --restart=always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v portainer_data:/data \
   portainer/portainer-ce:latest
@@ -80,9 +85,20 @@ Many stacks require environment variables to be set. Create a `.env` file in eac
 - `SRV_DIRECTORY` - Path to service data directory
 - `LIBRARY_DIRECTORY` - Path to media library directory
 
+## Deployment Order
+
+For a complete setup, consider deploying stacks in this order:
+
+1. **Traefik** - Required for reverse proxy routing
+2. **Pi-hole** - Provides DNS resolution for `*.local.box` domains (optional but recommended)
+3. **Pirateship** - Media automation stack (requires Traefik)
+4. **Prometheus** - Monitoring stack (optional)
+5. **Filebrowser** - File management (optional)
+
 ## Notes
 
 - Each stack is independent and can be deployed separately
 - Some stacks create external networks/volumes that may be shared
 - Check individual stack READMEs for specific prerequisites and configuration
 - Traefik should typically be deployed first as it provides routing for other services
+- External volumes and networks must be created before deploying stacks that reference them
