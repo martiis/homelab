@@ -4,12 +4,16 @@ services:
     filebrowser:
         image: filebrowser/filebrowser:s6
         container_name: filebrowser
-        ports:
-            - '8880:80'
+        networks:
+            - traefik_traefik_net
         volumes:
             - 'filebrowser_data:/config'
             - 'filebrowser_db:/database'
             - '${SRV_DIRECTORY}:/srv'
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.filebrowser.entrypoints=http"
+            - "traefik.http.routers.filebrowser.rule=Host(`filebrowser.local.box`)"
         environment:
             PUID: ${PUID}
             PGID: ${PGID}
