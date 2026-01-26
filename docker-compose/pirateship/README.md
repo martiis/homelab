@@ -1,13 +1,13 @@
 # Pirateship
 
-A complete media automation stack for downloading, organizing, and streaming media content. Includes media servers (Plex, Jellyfin), download clients (Deluge), indexers (Jackett), and management tools (Sonarr, Radarr, Lidarr, Bazarr) for TV shows, movies, and music. Also includes Homer dashboard for easy access to all services.
+A complete media automation stack for downloading, organizing, and streaming media content. Includes media servers (Plex, Jellyfin), download clients (Deluge), indexers (Jackett, FlareSolverr), and management tools (Sonarr, Radarr, Bazarr) for TV shows and movies. Also includes Homer dashboard for easy access to all services.
 
 ## Services
 
 | Name | Image | Port | Access |
 | --- | --- | --- | --- |
 | homer | b4bz/homer:latest | 8080 | http://homer.local.box |
-| lidarr | linuxserver/lidarr:latest | 8686 | http://lidarr.local.box |
+| flaresolverr | ghcr.io/flaresolverr/flaresolverr:latest | 8191 | http://flaresolverr.local.box |
 | bazarr | linuxserver/bazarr:latest | 6767 | http://bazarr.local.box |
 | sonarr | linuxserver/sonarr:latest | 8989 | http://sonarr.local.box |
 | radarr | linuxserver/radarr:latest | 7878 | http://radarr.local.box |
@@ -56,7 +56,7 @@ docker volume create lidarr_data
 For Traefik routing to work, ensure your local DNS (e.g., Pi-hole) resolves `*.local.box` domains to your host IP, or add entries to `/etc/hosts`:
 
 ```
-<host-ip> homer.local.box lidarr.local.box bazarr.local.box sonarr.local.box radarr.local.box deluge.local.box jackett.local.box
+<host-ip> homer.local.box flaresolverr.local.box bazarr.local.box sonarr.local.box radarr.local.box deluge.local.box jackett.local.box
 ```
 
 ## Run
@@ -82,7 +82,7 @@ docker compose up -d
 Most services are accessible through Traefik reverse proxy at their respective `*.local.box` domains. Plex and Jellyfin use host networking and are accessible directly via host IP:
 
 - **Homer Dashboard**: http://homer.local.box
-- **Lidarr** (Music): http://lidarr.local.box
+- **FlareSolverr** (Cloudflare bypass): http://flaresolverr.local.box
 - **Bazarr** (Subtitles): http://bazarr.local.box
 - **Sonarr** (TV Shows): http://sonarr.local.box
 - **Radarr** (Movies): http://radarr.local.box
@@ -98,14 +98,15 @@ Plex and Jellyfin are configured with Intel iGPU access via `/dev/dri` device ma
 ## Initial Setup
 
 1. **Jackett**: Add indexers/trackers for torrent searching
-2. **Deluge**: Configure download paths and settings
-3. **Sonarr/Radarr/Lidarr**: 
+2. **FlareSolverr**: Configure in Jackett/Radarr/Sonarr if needed for Cloudflare-protected indexers
+3. **Deluge**: Configure download paths and settings
+4. **Sonarr/Radarr**: 
    - Add download client (Deluge)
-   - Add indexer (Jackett)
+   - Add indexer (Jackett, optionally with FlareSolverr)
    - Configure root folders pointing to `/library`
    - Add media to monitor
-4. **Bazarr**: Connect to Sonarr/Radarr for subtitle management
-5. **Plex/Jellyfin**: 
+5. **Bazarr**: Connect to Sonarr/Radarr for subtitle management
+6. **Plex/Jellyfin**: 
    - Add media libraries pointing to `/library`
    - Configure users and sharing as needed
 
