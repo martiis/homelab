@@ -6,7 +6,12 @@
 
 | Name | Image | Port | Access |
 | --- | --- | --- | --- |
-| traefik | traefik:v3 | 80, 8080 | http://<host-ip>:8080 (dashboard) |
+| traefik | traefik:v3 | 80, 8080, 27813 | http://<host-ip>:8080 (dashboard) |
+
+## Prerequisites
+
+- Docker and Docker Compose installed
+- No other service should be using ports 80, 8080, or 27813
 
 ## Run
 
@@ -37,16 +42,16 @@ Traefik creates a bridge network `traefik_traefik_net`. This network is used by 
 
 Traefik is configured with the following entry points:
 
-- **http** (port 80): Main HTTP entry point for web services
-- **remote** (port 27813): Custom entry point for remote access
-- **metrics** (port 8082): Metrics endpoint (exposed internally)
+- **http** (port 80): Main HTTP entry point for web services routed through Traefik
+- **remote** (port 27813): Custom entry point for remote access (exposed but not used by default)
+- **metrics** (port 8082): Metrics endpoint for monitoring (exposed internally only)
 
 ## Docker Provider
 
 Traefik is configured to:
-- Automatically discover Docker containers
+- Automatically discover Docker containers on the same network
 - Only expose containers with `traefik.enable=true` label
-- Use the `traefik_net` network (or `traefik_traefik_net` if renamed) for service discovery
+- Use the `traefik_traefik_net` network for service discovery
 
 ## Usage with Other Stacks
 
@@ -65,9 +70,10 @@ To use Traefik with other stacks (e.g., pirateship), ensure:
 
 ## Notes
 
-- Traefik requires access to the Docker socket (`/var/run/docker.sock`) to discover containers
-- The dashboard is enabled in insecure mode - consider adding authentication for production use
-- Traefik must be running before other stacks that depend on it
+- **Docker Socket Access**: Traefik requires access to the Docker socket (`/var/run/docker.sock`) to discover containers automatically
+- **Dashboard Security**: The dashboard is enabled in insecure mode for local network access
+- **Deployment Order**: Traefik should be deployed first before other stacks that depend on it (e.g., Pirateship)
+- **Network**: The `traefik_traefik_net` network is created automatically and must be used by other stacks for Traefik routing to work
 
 [traefik]: https://traefik.io/
 
