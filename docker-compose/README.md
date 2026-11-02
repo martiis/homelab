@@ -75,6 +75,37 @@ docker run -d \
   portainer/portainer-ce:latest
 ```
 
+<details>
+<summary><b>Upgrade with Traefik & Tailscale HTTPS Setup</b></summary>
+
+<br>
+
+Use this command if Portainer is routed through a Traefik reverse proxy attached to `traefik_traefik_net` using a dedicated HTTPS entrypoint (`portainer_sec`) and Tailscale certificate resolver.
+
+```bash
+docker stop portainer && \
+docker rm portainer && \
+docker pull portainer/portainer-ce:latest && \
+docker run -d \
+  -p 9000:9000 \
+  --name=portainer \
+  --restart=always \
+  --network=traefik_traefik_net \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  --label 'traefik.enable=true' \
+  --label 'traefik.docker.network=traefik_traefik_net' \
+  --label 'traefik.http.routers.portainer-ts.entrypoints=portainer_sec' \
+  --label 'traefik.http.routers.portainer-ts.rule=Host(`<your-server>.<your-tailnet>.ts.net`)' \
+  --label 'traefik.http.routers.portainer-ts.tls=true' \
+  --label 'traefik.http.routers.portainer-ts.tls.certresolver=tailscale' \
+  --label 'traefik.http.routers.portainer-ts.service=portainer-svc' \
+  --label 'traefik.http.services.portainer-svc.loadbalancer.server.port=9000' \
+  portainer/portainer-ce:latest
+```
+
+</details>
+
 ## Environment Variables
 
 Many stacks require environment variables to be set. Create a `.env` file in each stack directory with the required variables. Common variables include:
